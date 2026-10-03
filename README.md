@@ -235,7 +235,7 @@ For major changes, please open an issue first.
 
 ##  License
 
-MIT — see [LICENSE](LICENSE) for details.
+Apache 2.0 — see [LICENSE](LICENSE) for details.
 
 
 ##  Inspiration
