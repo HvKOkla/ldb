@@ -3,7 +3,7 @@ local M = {}
 local unpack    = table.unpack or unpack
 local math_type = math.type or function(_) return nil end
 
--- table.pack n'existe qu'a partir de Lua 5.2
+
 local pack = table.pack or function(...)
     return { n = select("#", ...), ... }
 end
