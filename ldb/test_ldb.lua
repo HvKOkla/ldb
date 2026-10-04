@@ -72,7 +72,8 @@ ok("Watch OK")
 
 print()
 print(line())
-print(ljust("  [OK] All tests passed", 62))
+print(ljust("  [OK] Core tests passed", 62))
+print(ljust("       (hook, toFile, install_globals NOT tested)", 62))
 print(line())
 print()
 
