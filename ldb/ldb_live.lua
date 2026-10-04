@@ -1,12 +1,14 @@
+
 local M = {}
+
 
 M._items    = {}
 M._interval = 1.0
 M._last     = 0
 
 function M.add(name, getter)
-    if type(name) ~= "string"     then error("ldb.watch.add: name doit être string", 2) end
-    if type(getter) ~= "function" then error("ldb.watch.add: getter doit être function", 2) end
+    if type(name) ~= "string"     then error("ldb.watch.add: name doit etre string", 2) end
+    if type(getter) ~= "function" then error("ldb.watch.add: getter doit etre function", 2) end
     M._items[name] = getter
 end
 
@@ -96,5 +98,12 @@ end
 
 function M.step() M.step_mode = true end
 function M.cont() M.step_mode = false end
+
+
+if ... == nil then
+    io.stderr:write("ldb_live.lua is a module, not a script.\n")
+    io.stderr:write("Use: local ldb = require('ldb'); ldb.watch.add(...)\n")
+    io.stderr:write("Run 'test_ldb.lua' to test it.\n")
+end
 
 return M
