@@ -1,8 +1,5 @@
 local M = {}
 
--- ============================================================================
--- COMPAT LUA 5.1
--- ============================================================================
 local unpack    = table.unpack or unpack
 local math_type = math.type or function(_) return nil end
 
@@ -11,9 +8,6 @@ local pack = table.pack or function(...)
     return { n = select("#", ...), ... }
 end
 
--- ============================================================================
--- UTILITAIRES INTERNES
--- ============================================================================
 local function assert_function(fn, name, fname)
     if type(fn) ~= "function" then
         error(("[ldb.%s] '%s' doit être une fonction (reçu: %s)")
@@ -28,9 +22,6 @@ local function assert_string(s, name, fname)
     end
 end
 
--- ============================================================================
--- DUMP
--- ============================================================================
 local function ser_scalar(v)
     local t = type(v)
     if t == "string" then
@@ -126,9 +117,7 @@ function M.tap(label, value, opts)
     return value
 end
 
--- ============================================================================
--- TRACE
--- ============================================================================
+
 function M.stack(levels, skip)
     levels = tonumber(levels) or 15
     skip   = (tonumber(skip) or 0) + 2
@@ -173,9 +162,6 @@ function M.wrap(fn, name)
     end
 end
 
--- ============================================================================
--- BENCH
--- ============================================================================
 local _timers = {}
 
 function M.time(label, fn, ...)
