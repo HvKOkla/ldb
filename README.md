@@ -167,6 +167,46 @@ ldb.hook.install()
 **Warning**: `install()` uses `debug.sethook` and slows execution **10× to 100×**.
 Use it only in development.
 
+## What does each file do?
+
+| File | Role | Loaded when? |
+|------|------|--------------|
+| `ldb.lua` | **Public API + Logger** — the only file you need to `require()` | Always (entry point) |
+| `ldb_dump.lua` | **Dump, Trace, Bench** — table inspection, stack traces, benchmarks | Lazily, when you call `ldb.dump.*`, `ldb.trace.*`, or `ldb.bench.*` |
+| `ldb_live.lua` | **Watch, Hook** — real-time variable monitoring and breakpoints | Lazily, when you call `ldb.watch.*` or `ldb.hook.*` |
+| `test_ldb.lua` | **Test suite** — verifies all modules work | Only when you run it manually |
+
+### How lazy loading works
+
+You only need to `require("ldb")`. The other files are loaded **on demand** the first time you use one of their functions.
+
+```lua
+local ldb = require("ldb")   
+
+ldb.log.info("App", "hi")    
+
+ldb.dump.print({ a = 1 })    
+ldb.bench.avg("test", 1000, fn)  
+
+ldb.watch.add("fps", getFPS) 
+```
+
+If `ldb_dump.lua` or `ldb_live.lua` is missing, `ldb.lua` still works — only the missing module errors.
+
+### Running the tests
+
+```sh
+DBG=1 lua test_ldb.lua          # Linux / macOS
+$env:DBG = "1"; lua test_ldb.lua  # Windows PowerShell
+```
+
+Expected output ends with:
+```
+========================================
+  ✅ All tests passed
+========================================
+```
+
 
 ## Environment activation
 
