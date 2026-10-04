@@ -1,4 +1,4 @@
--- test_ldb.lua : suite de tests pour ldb
+
 local ok, ldb = pcall(require, "ldb")
 if not ok then
     io.stderr:write("[FATAL] Cannot load ldb: " .. tostring(ldb) .. "\n")
