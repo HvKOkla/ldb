@@ -1,4 +1,6 @@
+
 local M = {}
+
 
 local unpack    = table.unpack or unpack
 local math_type = math.type or function(_) return nil end
@@ -8,19 +10,21 @@ local pack = table.pack or function(...)
     return { n = select("#", ...), ... }
 end
 
+
 local function assert_function(fn, name, fname)
     if type(fn) ~= "function" then
-        error(("[ldb.%s] '%s' doit être une fonction (reçu: %s)")
+        error(("[ldb.%s] '%s' doit etre une fonction (recu: %s)")
             :format(fname, name, type(fn)), 3)
     end
 end
 
 local function assert_string(s, name, fname)
     if type(s) ~= "string" then
-        error(("[ldb.%s] '%s' doit être une string (reçu: %s)")
+        error(("[ldb.%s] '%s' doit etre une string (recu: %s)")
             :format(fname, name, type(s)), 3)
     end
 end
+
 
 local function ser_scalar(v)
     local t = type(v)
@@ -156,11 +160,12 @@ function M.wrap(fn, name)
     name = name or "<anon>"
     return function(...)
         local info = debug.getinfo(2, "Sl")
-        print(string.format("[TRACE] %s appelée depuis %s:%d",
+        print(string.format("[TRACE] %s appelee depuis %s:%d",
             name, info.short_src or "?", info.currentline or -1))
         return fn(...)
     end
 end
+
 
 local _timers = {}
 
@@ -168,7 +173,7 @@ function M.time(label, fn, ...)
     assert_string(label, "label", "bench.time")
     assert_function(fn, "fn", "bench.time")
     local t0 = os.clock()
-    local res = pack(fn(...))                    -- <-- CORRIGE : pack local
+    local res = pack(fn(...))
     print(string.format("[BENCH] %-30s %8.3f ms",
         tostring(label), (os.clock() - t0) * 1000))
     return unpack(res, 1, res.n)
@@ -198,13 +203,20 @@ function M.stop(label)
     assert_string(label, "label", "bench.stop")
     local t0 = _timers[label]
     if not t0 then
-        error(("[ldb.bench.stop] Timer '%s' non démarré")
+        error(("[ldb.bench.stop] Timer '%s' non demarre")
             :format(tostring(label)), 2)
     end
     _timers[label] = nil
     local dt = (os.clock() - t0) * 1000
     print(string.format("[BENCH] %-30s %8.3f ms", tostring(label), dt))
     return dt
+end
+
+
+if ... == nil then
+    io.stderr:write("ldb_dump.lua is a module, not a script.\n")
+    io.stderr:write("Use: local ldb = require('ldb'); ldb.dump.print(...)\n")
+    io.stderr:write("Run 'test_ldb.lua' to test it.\n")
 end
 
 return M
