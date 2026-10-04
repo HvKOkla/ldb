@@ -1,9 +1,19 @@
-
 local M = {}
 
-local unpack = table.unpack or unpack
+-- ============================================================================
+-- COMPAT LUA 5.1
+-- ============================================================================
+local unpack    = table.unpack or unpack
 local math_type = math.type or function(_) return nil end
 
+-- table.pack n'existe qu'a partir de Lua 5.2
+local pack = table.pack or function(...)
+    return { n = select("#", ...), ... }
+end
+
+-- ============================================================================
+-- UTILITAIRES INTERNES
+-- ============================================================================
 local function assert_function(fn, name, fname)
     if type(fn) ~= "function" then
         error(("[ldb.%s] '%s' doit être une fonction (reçu: %s)")
@@ -18,6 +28,9 @@ local function assert_string(s, name, fname)
     end
 end
 
+-- ============================================================================
+-- DUMP
+-- ============================================================================
 local function ser_scalar(v)
     local t = type(v)
     if t == "string" then
@@ -59,7 +72,6 @@ function M.inspect(value, opts)
     local function rec(v, depth, indent)
         local t = type(v)
 
-       
         if t == "table" then
             local mt = getmetatable(v)
             if mt and mt.__tostring then
@@ -114,6 +126,9 @@ function M.tap(label, value, opts)
     return value
 end
 
+-- ============================================================================
+-- TRACE
+-- ============================================================================
 function M.stack(levels, skip)
     levels = tonumber(levels) or 15
     skip   = (tonumber(skip) or 0) + 2
@@ -126,7 +141,6 @@ function M.stack(levels, skip)
         local name = info.name or "?"
         local what = info.what or "?"
 
-        -- Gestion propre des tail calls et fonctions C
         if line == -1 then
             if what == "C" then name = "<C>" else name = "<tail call>" end
         end
@@ -159,13 +173,16 @@ function M.wrap(fn, name)
     end
 end
 
+-- ============================================================================
+-- BENCH
+-- ============================================================================
 local _timers = {}
 
 function M.time(label, fn, ...)
     assert_string(label, "label", "bench.time")
     assert_function(fn, "fn", "bench.time")
     local t0 = os.clock()
-    local res = table.pack(fn(...))
+    local res = pack(fn(...))                    -- <-- CORRIGE : pack local
     print(string.format("[BENCH] %-30s %8.3f ms",
         tostring(label), (os.clock() - t0) * 1000))
     return unpack(res, 1, res.n)
@@ -177,7 +194,6 @@ function M.avg(label, n, fn, ...)
     n = tonumber(n) or 1
     if n < 1 then n = 1 end
 
-    -- Warmup
     for _ = 1, math.min(10, n) do fn(...) end
 
     local t0 = os.clock()
