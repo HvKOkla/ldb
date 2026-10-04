@@ -1,6 +1,5 @@
-
 local ldb = {
-    _VERSION = "0.1.0",
+    _VERSION = "0.1.1",
     _NAME    = "ldb",
     _URL     = "https://github.com/<toi>/ldb",
 }
