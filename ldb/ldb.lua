@@ -1,10 +1,10 @@
+
 local ldb = {
-    _VERSION = "0.1.1",
+    _VERSION = "0.1.2",
     _NAME    = "ldb",
-    _URL     = "https://github.com/<toi>/ldb",
+    _URL     = "https://codeberg.org/HvK_Okla/ldb",
 }
 
-local unpack = table.unpack or unpack
 
 local function env_enabled()
     local v = os.getenv("DBG")
@@ -38,6 +38,11 @@ local COLORS = {
 function Logger.setLevel(l) Logger._level = Logger.LEVELS[l] or l end
 function Logger.only(m)    Logger._targets[m] = true  end
 function Logger.except(m)  Logger._targets[m] = false end
+
+function Logger.reset()
+    Logger._targets = {}
+    Logger._level = Logger.LEVELS.INFO
+end
 
 function Logger.toFile(path)
     if Logger._file then Logger._file:close() end
@@ -100,6 +105,7 @@ function Logger.scope(prefix)
     return sub
 end
 
+
 local function lazy(name, methods)
     local mod = nil
     local proxy = {}
@@ -109,7 +115,7 @@ local function lazy(name, methods)
                 local ok, loaded = pcall(require, name)
                 if not ok then
                     error("[ldb] Module '" .. name .. "' introuvable.\n" ..
-                          "Copie " .. name .. ".lua à côté de ldb.lua.", 2)
+                          "Copie " .. name .. ".lua a cote de ldb.lua.", 2)
                 end
                 mod = loaded
             end
@@ -128,11 +134,19 @@ ldb.hook  = lazy("ldb_live",  {"break_at", "remove_break", "clear_breaks",
                                "install", "uninstall", "step", "cont",
                                "set_handler", "set_condition"})
 
+
 function ldb.install_globals()
     _G.ldb_log  = Logger
     _G.ldb_dump = ldb.dump.print
     _G.ldb_trc  = ldb.trace.here
     _G.ldb_w    = ldb.watch.add
+end
+
+
+if ... == nil then
+    io.stderr:write("ldb.lua is a module, not a script.\n")
+    io.stderr:write("Use: local ldb = require('ldb')\n")
+    io.stderr:write("Run 'test_ldb.lua' to test it, or 'main.lua' for a demo.\n")
 end
 
 return ldb
