@@ -1,4 +1,3 @@
-
 local M = {}
 
 M._items    = {}
@@ -41,9 +40,7 @@ end
 
 function M.setInterval(s) M._interval = s end
 
--- ============================================================================
--- HOOK (breakpoints + step)
--- ============================================================================
+
 M.breakpoints = {}
 M.condition   = nil
 M.on_hit      = nil
